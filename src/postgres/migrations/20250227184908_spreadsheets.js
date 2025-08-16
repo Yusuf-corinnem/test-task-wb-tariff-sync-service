@@ -3,8 +3,16 @@
  * @returns {Promise<void>}
  */
 export async function up(knex) {
+    // Сначала удаляем таблицу, если она существует (для пересоздания)
+    await knex.schema.dropTableIfExists("spreadsheets");
+
     return knex.schema.createTable("spreadsheets", (table) => {
-        table.string("spreadsheet_id").primary();
+        table.increments("id").primary();
+        table.string("spreadsheet_id", 255).unique().notNullable();
+        table.string("region_filter", 255);
+        table.string("description", 500);
+        table.boolean("is_active").defaultTo(true);
+        table.timestamp("created_at").defaultTo(knex.fn.now());
     });
 }
 

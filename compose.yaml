@@ -13,6 +13,7 @@ services:
 
   postgres:
     container_name: postgres
+    platform: linux/amd64
 
     image: postgres:16.1-alpine
 
@@ -44,9 +45,9 @@ services:
 
     restart: unless-stopped
 
-
   app:
     container_name: app
+    platform: linux/amd64
 
     build:
       context: .
