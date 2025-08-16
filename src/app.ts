@@ -1,4 +1,4 @@
-import knex, { migrate, seed } from "#postgres/knex.js";
+import knex, { migrate, seed } from "#infrastructure/database/knex.js";
 
 console.log("Starting WB Tariff Sync Service...");
 
