@@ -1,16 +1,7 @@
 import dotenv from "dotenv";
 import { z } from "zod";
 
-console.log('Loading .env file...');
 dotenv.config();
-
-console.log('Environment variables loaded:', {
-    WB_API_KEY: process.env.WB_API_KEY ? `${process.env.WB_API_KEY.substring(0, 10)}...` : 'undefined',
-    WB_API_BASE_URL: process.env.WB_API_BASE_URL,
-    WB_TIMEOUT: process.env.WB_TIMEOUT,
-    WB_RETRY_ATTEMPTS: process.env.WB_RETRY_ATTEMPTS,
-    hasWbApiKey: !!process.env.WB_API_KEY
-});
 
 const envSchema = z.object({
     NODE_ENV: z.union([z.undefined(), z.enum(["development", "production"])]),
@@ -52,12 +43,6 @@ const env = envSchema.parse({
     WB_API_KEY: process.env.WB_API_KEY,
     WB_API_BASE_URL: process.env.WB_API_BASE_URL,
     WB_TIMEOUT: process.env.WB_TIMEOUT,
-});
-
-console.log('Parsed env object:', {
-    WB_API_KEY: env.WB_API_KEY ? `${env.WB_API_KEY.substring(0, 10)}...` : 'undefined',
-    WB_API_BASE_URL: env.WB_API_BASE_URL,
-    WB_TIMEOUT: env.WB_TIMEOUT
 });
 
 export default env;
