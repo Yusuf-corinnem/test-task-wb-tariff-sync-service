@@ -4,6 +4,7 @@ import { GetTariffsUseCase } from '../../domain/usecases/GetTariffsUseCase';
 import { GetAvailableDatesUseCase } from '../../domain/usecases/GetAvailableDatesUseCase';
 import { UpdateTariffsUseCase } from '../../domain/usecases/UpdateTariffsUseCase';
 import { logger } from '../../shared/utils/logger';
+import { Validator } from '../../shared/utils/Validator';
 
 export class TariffsController {
     constructor(
@@ -20,18 +21,42 @@ export class TariffsController {
                 res.status(400).json(response);
                 return;
             }
+
             const targetDate = new Date(date);
-            if (isNaN(targetDate.getTime())) {
-                const response = createValidationErrorResponse('Invalid date format. Use YYYY-MM-DD');
+            try {
+                Validator.validateDate(targetDate);
+            } catch (e) {
+                const response = createValidationErrorResponse((e as Error).message);
                 res.status(400).json(response);
                 return;
             }
+
             logger.info('Fetching tariffs by date via API', {
                 context: 'TariffsController.getTariffsByDate',
                 metadata: { date: date }
             });
+
             const result = await this.getTariffsUseCase.execute(date);
-            const response = createSuccessResponse(result, 'Tariffs retrieved successfully');
+            if (!result || !result.metadata) {
+                res.status(404).json(createValidationErrorResponse('No data for the specified date'));
+                return;
+            }
+
+            // Приводим casing метаданных к camelCase
+            const response = createSuccessResponse({
+                date: result.date,
+                metadata: {
+                    id: result.metadata.id,
+                    date: result.metadata.date,
+                    dtTillMax: result.metadata.dt_till_max,
+                    createdAt: result.metadata.created_at,
+                    updatedAt: result.metadata.updated_at
+                },
+                tariffs: result.tariffs,
+                count: result.count,
+                timestamp: result.timestamp
+            }, 'Tariffs retrieved successfully');
+
             res.status(200).json(response);
         } catch (error) {
             logger.error('Failed to get tariffs by date via API', {

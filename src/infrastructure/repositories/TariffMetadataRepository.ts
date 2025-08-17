@@ -11,10 +11,8 @@ export class TariffMetadataRepository extends BaseRepository<TariffMetadata> imp
         super(knex);
     }
 
-    // Переопределяем create для использования маппера
     async create(data: Partial<TariffMetadata>): Promise<TariffMetadata> {
         try {
-            // Создаем Entity из переданных данных
             const metadata = new TariffMetadata(
                 data.id || 0,
                 data.date || new Date(),
@@ -23,47 +21,44 @@ export class TariffMetadataRepository extends BaseRepository<TariffMetadata> imp
                 data.updatedAt || new Date()
             );
 
-            // Маппим Entity в БД формат (snake_case)
             const dbData = TariffMetadataMapper.toDto(metadata);
+            const insertData: any = { ...dbData };
+            delete insertData.id;
 
             const [result] = await this.knex(this.tableName)
-                .insert(dbData)
+                .insert(insertData)
+                .onConflict(['date'])
+                .merge(insertData)
                 .returning('*');
 
-            // Маппим результат БД обратно в Entity
             return TariffMetadataMapper.toEntity(result);
         } catch {
             throw new Error('Failed to create record');
         }
     }
 
-    // Переопределяем update для использования маппера
     async update(id: number, data: Partial<TariffMetadata>): Promise<TariffMetadata | null> {
         try {
-            // Получаем существующий метаданные
             const existing = await this.findById(id);
             if (!existing) return null;
 
-            // Создаем обновленный Entity
             const updatedMetadata = new TariffMetadata(
                 existing.id,
                 data.date ?? existing.date,
                 data.dtTillMax ?? existing.dtTillMax,
                 existing.createdAt,
-                new Date() // updatedAt
+                new Date()
             );
 
-            // Маппим Entity в БД формат (snake_case)
             const dbData = TariffMetadataMapper.toDto(updatedMetadata);
-            delete dbData.id; // Не обновляем ID
-            delete dbData.created_at; // Не обновляем created_at
+            delete dbData.id;
+            delete dbData.created_at;
 
             const [result] = await this.knex(this.tableName)
                 .where('id', id)
                 .update(dbData)
                 .returning('*');
 
-            // Маппим результат БД обратно в Entity
             return TariffMetadataMapper.toEntity(result);
         } catch {
             throw new Error('Failed to update record');
@@ -79,14 +74,12 @@ export class TariffMetadataRepository extends BaseRepository<TariffMetadata> imp
 
             if (!result) return null;
 
-            // Маппим результат БД в Entity
             return TariffMetadataMapper.toEntity(result);
         } catch {
             throw new Error('Failed to find metadata by date');
         }
     }
 
-    // Переопределяем findById для использования маппера
     async findById(id: number): Promise<TariffMetadata | null> {
         try {
             const result = await this.knex(this.tableName)
@@ -96,19 +89,15 @@ export class TariffMetadataRepository extends BaseRepository<TariffMetadata> imp
 
             if (!result) return null;
 
-            // Маппим результат БД в Entity
             return TariffMetadataMapper.toEntity(result);
         } catch {
             throw new Error('Failed to find record by id');
         }
     }
 
-    // Переопределяем findAll для использования маппера
     async findAll(): Promise<TariffMetadata[]> {
         try {
             const results = await this.knex(this.tableName).select('*');
-
-            // Маппим результаты БД в Entity
             return results.map(dbRow => TariffMetadataMapper.toEntity(dbRow));
         } catch (error) {
             throw new Error('Failed to find all records');
