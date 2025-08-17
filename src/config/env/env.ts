@@ -30,6 +30,13 @@ const envSchema = z.object({
             .regex(/^[0-9]+$/)
             .transform((value) => parseInt(value)),
     ]),
+    WB_RETRY_ATTEMPTS: z.union([
+        z.undefined(),
+        z
+            .string()
+            .regex(/^[0-9]+$/)
+            .transform((value) => parseInt(value)),
+    ]),
 });
 
 const env = envSchema.parse({
@@ -43,6 +50,7 @@ const env = envSchema.parse({
     WB_API_KEY: process.env.WB_API_KEY,
     WB_API_BASE_URL: process.env.WB_API_BASE_URL,
     WB_TIMEOUT: process.env.WB_TIMEOUT,
+    WB_RETRY_ATTEMPTS: process.env.WB_RETRY_ATTEMPTS,
 });
 
 export default env;

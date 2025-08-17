@@ -60,6 +60,10 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       PORT: ${APP_PORT}
+      WB_API_KEY: ${WB_API_KEY}
+      WB_API_BASE_URL: ${WB_API_BASE_URL}
+      WB_TIMEOUT: ${WB_TIMEOUT}
+      WB_RETRY_ATTEMPTS: ${WB_RETRY_ATTEMPTS}
       NODE_ENV: production
 
     ports:

@@ -1,4 +1,3 @@
-# your node version
 FROM node:20-alpine AS deps-prod
 
 WORKDIR /app
@@ -22,7 +21,4 @@ WORKDIR /app
 COPY --from=build /app/package*.json .
 COPY --from=deps-prod /app/node_modules ./node_modules
 COPY --from=build /app/dist ./dist
-# Копируем исходные миграции/сиды, т.к. knex указывает на ./src/postgres
 COPY --from=build /app/src/infrastructure/database ./src/infrastructure/database
-# Копируем .env файл для переменных окружения
-COPY --from=build /app/.env ./.env
