@@ -1,7 +1,7 @@
 import { BaseRepository } from './BaseRepository';
 import { Tariff } from '../../domain/entities/Tariff';
 import { Knex } from 'knex';
-import { ITariffsRepository } from '../../domain/interfaces/ITariffsRepository';
+import { ITariffsRepository } from '../../domain/interfaces/repositories/ITariffsRepository';
 
 export class TariffsRepository extends BaseRepository<Tariff> implements ITariffsRepository {
     protected tableName = 'tariffs';

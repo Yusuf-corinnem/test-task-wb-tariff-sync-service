@@ -1,7 +1,7 @@
 import { BaseRepository } from './BaseRepository';
 import { TariffMetadata } from '../../domain/entities/TariffMetadata';
 import { Knex } from 'knex';
-import { ITariffMetadataRepository } from '../../domain/interfaces/ITariffMetadataRepository';
+import { ITariffMetadataRepository } from '../../domain/interfaces/repositories/ITariffMetadataRepository';
 
 export class TariffMetadataRepository extends BaseRepository<TariffMetadata> implements ITariffMetadataRepository {
     protected tableName = 'tariff_metadata';

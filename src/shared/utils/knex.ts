@@ -1,25 +1,20 @@
-import { migrate, seed } from "#infrastructure/database/knex.js";
 import { Command } from "commander";
+import { migrate, seed } from "../../infrastructure/database/knex";
 const program = new Command();
 
 program
     .command("migrate")
-    .argument("[type]", "latest|rollback|status|down|up|list")
-    .argument("[arg]", "version")
-    .action(async (action: string, arg: string) => {
+    .argument("[type]", "latest|rollback|status")
+    .action(async (action: string) => {
         if (!action) return;
         if (action === "latest") await migrate.latest();
         if (action === "rollback") await migrate.rollback();
-        if (action === "down") await migrate.down(arg);
-        if (action === "up") await migrate.up(arg);
-        if (action === "list") await migrate.list();
-        if (action === "make") await migrate.make(arg);
+        if (action === "status") await migrate.status();
         process.exit(0);
     });
-program.command("seed [action] [arg]").action(async (action: string, arg: string) => {
+program.command("seed [action]").action(async (action: string) => {
     if (!action) return;
     if (action === "run") await seed.run();
-    if (action === "make") await seed.make(arg);
     process.exit(0);
 });
 program.command("default", { isDefault: true }).action(() => { });

@@ -1,29 +1,21 @@
 {
     "compilerOptions": {
-        "strict": true,
-        "module": "ESNext",
-        "moduleResolution": "bundler",
-        "target": "es2022",
-        "esModuleInterop": true,
-        "allowJs": true,
-        "checkJs": true,
-        "skipLibCheck": true,
-        "rootDir": "./src",
+        "target": "es2018",
+        "module": "commonjs",
         "outDir": "./dist",
-        "paths": {
-            "#*": [
-                "./src/*",
-                "./dist/*"
-            ]
-        }
+        "rootDir": "./src",
+        "strict": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true,
+        "allowSyntheticDefaultImports": true,
+        "allowJs": true
     },
     "include": [
-        "src/**/*.ts",
-        "src/**/*.js",
+        "src/**/*"
     ],
     "exclude": [
         "node_modules",
-        "src/**/*.test.*",
-        "src/**/*.spec.*"
+        "dist"
     ]
 }

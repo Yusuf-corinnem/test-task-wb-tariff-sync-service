@@ -4,17 +4,17 @@ export class Tariff {
         public readonly tariffMetadataId: number,
         public readonly warehouseName: string,
         public readonly geoName: string,
-        public readonly boxDeliveryAndStorageCoefficient: number,
-        public readonly boxDeliveryCoefficient: number,
-        public readonly boxStorageCoefficient: number,
-        public readonly boxDeliveryBase: number,
-        public readonly boxStorageBase: number,
-        public readonly boxDeliveryLiter: number,
-        public readonly boxStorageLiter: number,
-        public readonly boxDeliveryMarketplaceBase: number,
-        public readonly boxDeliveryMarketplaceCoefficient: number,
-        public readonly boxDeliveryMarketplaceLiter: number,
+        // boxDeliveryAndStorageExpr - deprecated, будет удалено 19.08.2025
+        public readonly boxDeliveryCoefExpr: string,
+        public readonly boxStorageCoefExpr: string,
+        public readonly boxDeliveryBase: string,
+        public readonly boxStorageBase: string,
+        public readonly boxDeliveryLiter: string,
+        public readonly boxStorageLiter: string,
+        public readonly boxDeliveryMarketplaceBase: string,
+        public readonly boxDeliveryMarketplaceCoefExpr: string,
+        public readonly boxDeliveryMarketplaceLiter: string,
         public readonly createdAt: Date,
         public readonly updatedAt: Date
-    ) {}
+    ) { }
 }

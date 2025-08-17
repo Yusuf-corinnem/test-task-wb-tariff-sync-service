@@ -1,7 +1,7 @@
 import { BaseRepository } from './BaseRepository';
 import { Spreadsheet } from '../../domain/entities/Spreadsheet';
 import { Knex } from 'knex';
-import { ISpreadsheetsRepository } from '../../domain/interfaces/ISpreadsheetsRepository';
+import { ISpreadsheetsRepository } from '../../domain/interfaces/repositories/ISpreadsheetsRepository';
 
 export class SpreadsheetsRepository extends BaseRepository<Spreadsheet> implements ISpreadsheetsRepository {
     protected tableName = 'spreadsheets';

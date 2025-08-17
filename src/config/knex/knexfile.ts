@@ -1,4 +1,4 @@
-import env from "#config/env/env.js";
+import env from '../env/env.js';
 import { Knex } from "knex";
 import { z } from "zod";
 
@@ -29,13 +29,13 @@ const knegConfigs: Record<typeof NODE_ENV, Knex.Config> = {
         },
         migrations: {
             stub: 'src/config/knex/migration.stub.js',
-            directory: "./src/postgres/migrations",
+            directory: "./src/infrastructure/database/migrations",
             tableName: "migrations",
             extension: "js",
         },
         seeds: {
             stub: 'src/config/knex/seed.stub.js',
-            directory: "./src/postgres/seeds",
+            directory: "./src/infrastructure/database/seeds",
             extension: "js",
         },
     },
@@ -54,14 +54,14 @@ const knegConfigs: Record<typeof NODE_ENV, Knex.Config> = {
             max: 10,
         },
         migrations: {
-            stub: 'dist/config/knex/migration.stub.js',
-            directory: "./dist/postgres/migrations",
+            stub: 'src/config/knex/migration.stub.js',
+            directory: "./src/infrastructure/database/migrations",
             tableName: "migrations",
             extension: "js",
         },
         seeds: {
             stub: 'src/config/knex/seed.stub.js',
-            directory: "./dist/postgres/seeds",
+            directory: "./src/infrastructure/database/seeds",
             extension: "js",
         },
     },

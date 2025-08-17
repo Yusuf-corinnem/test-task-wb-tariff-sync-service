@@ -1,79 +1,67 @@
-import _knex from "knex";
-import knexConfig from "#config/knex/knexfile.js";
+import knex from 'knex';
+import knexfile from '../../config/knex/knexfile';
 
-const knex = _knex(knexConfig);
-export default knex;
+export const db = knex(knexfile);
 
-function logMigrationResults(action: string, result: [number, string[]]) {
-    if (result[1].length === 0) {
-        console.log(["latest", "up"].includes(action) ? "All migrations are up to date" : "All migrations have been rolled back");
-        return;
-    }
-    console.log(`Batch ${result[0]} ${["latest", "up"].includes(action) ? "ran" : "rolled back"} the following migrations:`);
-    for (const migration of result[1]) {
-        console.log("- " + migration);
-    }
-}
-function logMigrationList(list: [{ name: string }[], { file: string }[]]) {
-    console.log(`Found ${list[0].length} Completed Migration file/files.`);
-    for (const migration of list[0]) {
-        console.log("- " + migration.name);
-    }
-    console.log(`Found ${list[1].length} Pending Migration file/files.`);
-    for (const migration of list[1]) {
-        console.log("- " + migration.file);
-    }
-}
+export default db;
 
-function logSeedRun(result: [string[]]) {
-    if(result[0].length === 0) {
-        console.log("No seeds to run");
-    }
-    console.log(`Ran ${result[0].length} seed files`);
-    for(const seed of result[0]) {
-        console.log("- " + seed?.split(/\/|\\/).pop());
-    }
-    // Ran 5 seed files
-}
-
-function logSeedMake(name: string) {
-    console.log(`Created seed: ${name.split(/\/|\\/).pop()}`);
-}
-
+// CLI команды для миграций и сидов
 export const migrate = {
     latest: async () => {
-        logMigrationResults("latest", await knex.migrate.latest());
-    },
-    rollback: async () => {
-        logMigrationResults("rollback", await knex.migrate.rollback());
-    },
-    down: async (name?: string) => {
-        logMigrationResults("down", await knex.migrate.down({ name }));
-    },
-    up: async (name?: string) => {
-        logMigrationResults("up", await knex.migrate.up({ name }));
-    },
-    list: async () => {
-        logMigrationList(await knex.migrate.list());
-    },
-    make: async (name: string) => {
-        if (!name) {
-            console.error("Please provide a migration name");
-            process.exit(1);
+        try {
+            console.log('Running migrations...');
+            const [batchNo, log] = await db.migrate.latest();
+            console.log(`Migrations completed. Batch: ${batchNo}`);
+            if (log.length > 0) {
+                console.log('Applied migrations:', log);
+            }
+            return { batchNo, log };
+        } catch (error) {
+            console.error('Migration failed:', error);
+            throw error;
         }
-        console.log(await knex.migrate.make(name, { extension: "js" }));
     },
+
+    rollback: async () => {
+        try {
+            console.log('Rolling back migrations...');
+            const [batchNo, log] = await db.migrate.rollback();
+            console.log(`Rollback completed. Batch: ${batchNo}`);
+            if (log.length > 0) {
+                console.log('Rolled back migrations:', log);
+            }
+            return { batchNo, log };
+        } catch (error) {
+            console.error('Rollback failed:', error);
+            throw error;
+        }
+    },
+
+    status: async () => {
+        try {
+            const status = await db.migrate.status();
+            console.log('Migration status:', status);
+            return status;
+        } catch (error) {
+            console.error('Status check failed:', error);
+            throw error;
+        }
+    }
 };
 
 export const seed = {
     run: async () => {
-        logSeedRun(await knex.seed.run());
-    },
-    make: async (name: string) => {
-        if (!name) {
-            console.error("Please provide a seed name");
-            process.exit(1);
+        try {
+            console.log('Running seeds...');
+            const results = await db.seed.run();
+            console.log('Seeds completed successfully');
+            if (results && results.length > 0) {
+                console.log('Seed results:', results);
+            }
+            return results;
+        } catch (error) {
+            console.error('Seeding failed:', error);
+            throw error;
         }
-        logSeedMake(await knex.seed.make(name));
-    },
+    }
 };

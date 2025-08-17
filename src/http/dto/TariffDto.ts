@@ -3,14 +3,14 @@ export interface TariffDto {
     tariffMetadataId: number;
     warehouseName: string;
     geoName: string;
-    boxDeliveryAndStorageCoefficient: number;
-    boxDeliveryCoefficient: number;
-    boxStorageCoefficient: number;
-    boxDeliveryBase: number;
-    boxStorageBase: number;
-    boxDeliveryLiter: number;
-    boxStorageLiter: number;
-    boxDeliveryMarketplaceBase: number;
-    boxDeliveryMarketplaceCoefficient: number;
-    boxDeliveryMarketplaceLiter: number;
+    boxDeliveryAndStorageExpr: string;        // Deprecated, будет удалено 19.08.2025
+    boxDeliveryCoefExpr: string;
+    boxStorageCoefExpr: string;
+    boxDeliveryBase: string;
+    boxStorageBase: string;
+    boxDeliveryLiter: string;
+    boxStorageLiter: string;
+    boxDeliveryMarketplaceBase: string;
+    boxDeliveryMarketplaceCoefExpr: string;
+    boxDeliveryMarketplaceLiter: string;
 }   

@@ -1,5 +1,5 @@
 import { Knex } from "knex";
-import { IBaseRepository } from "../../domain/interfaces/IBaseRepository";
+import { IBaseRepository } from "../../domain/interfaces/repositories/IBaseRepository";
 
 export abstract class BaseRepository<T> implements IBaseRepository<T> {
     protected abstract tableName: string;
@@ -25,7 +25,7 @@ export abstract class BaseRepository<T> implements IBaseRepository<T> {
             return await this.knex(this.tableName)
                 .select('*')
                 .where('id', id)
-                .first();
+                .first() as T | null;
         } catch {
             throw new Error('Failed to find record by id');
         }
@@ -36,10 +36,11 @@ export abstract class BaseRepository<T> implements IBaseRepository<T> {
      */
     async create(data: Partial<T>): Promise<T> {
         try {
-            return await this.knex(this.tableName)
+            const [result] = await this.knex(this.tableName)
                 .insert(data)
-                .returning('*')
-                .first();
+                .returning('*');
+
+            return result as T;
         } catch {
             throw new Error('Failed to create record');
         }
@@ -50,11 +51,12 @@ export abstract class BaseRepository<T> implements IBaseRepository<T> {
      */
     async update(id: number, data: Partial<T>): Promise<T | null> {
         try {
-            return await this.knex(this.tableName)
+            const [result] = await this.knex(this.tableName)
                 .where('id', id)
                 .update(data)
-                .returning('*')
-                .first();
+                .returning('*');
+
+            return result as T | null;
         } catch {
             throw new Error('Failed to update record');
         }

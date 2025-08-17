@@ -1,6 +1,16 @@
 import dotenv from "dotenv";
 import { z } from "zod";
+
+console.log('Loading .env file...');
 dotenv.config();
+
+console.log('Environment variables loaded:', {
+    WB_API_KEY: process.env.WB_API_KEY ? `${process.env.WB_API_KEY.substring(0, 10)}...` : 'undefined',
+    WB_API_BASE_URL: process.env.WB_API_BASE_URL,
+    WB_TIMEOUT: process.env.WB_TIMEOUT,
+    WB_RETRY_ATTEMPTS: process.env.WB_RETRY_ATTEMPTS,
+    hasWbApiKey: !!process.env.WB_API_KEY
+});
 
 const envSchema = z.object({
     NODE_ENV: z.union([z.undefined(), z.enum(["development", "production"])]),
@@ -19,6 +29,16 @@ const envSchema = z.object({
             .regex(/^[0-9]+$/)
             .transform((value) => parseInt(value)),
     ]),
+    // WB API variables
+    WB_API_KEY: z.string().optional(),
+    WB_API_BASE_URL: z.string().optional(),
+    WB_TIMEOUT: z.union([
+        z.undefined(),
+        z
+            .string()
+            .regex(/^[0-9]+$/)
+            .transform((value) => parseInt(value)),
+    ]),
 });
 
 const env = envSchema.parse({
@@ -29,6 +49,15 @@ const env = envSchema.parse({
     POSTGRES_PASSWORD: process.env.POSTGRES_PASSWORD,
     NODE_ENV: process.env.NODE_ENV,
     APP_PORT: process.env.APP_PORT,
+    WB_API_KEY: process.env.WB_API_KEY,
+    WB_API_BASE_URL: process.env.WB_API_BASE_URL,
+    WB_TIMEOUT: process.env.WB_TIMEOUT,
+});
+
+console.log('Parsed env object:', {
+    WB_API_KEY: env.WB_API_KEY ? `${env.WB_API_KEY.substring(0, 10)}...` : 'undefined',
+    WB_API_BASE_URL: env.WB_API_BASE_URL,
+    WB_TIMEOUT: env.WB_TIMEOUT
 });
 
 export default env;
