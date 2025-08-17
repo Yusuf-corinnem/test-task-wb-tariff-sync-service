@@ -2,8 +2,8 @@ import { TariffMetadataDto } from "../../http/dto/TariffMetadataDto.js";
 import { TariffDto } from "../../http/dto/TariffDto.js";
 import { TariffMetadataRepository } from "../../infrastructure/repositories/TariffMetadataRepository.js";
 import { TariffsRepository } from "../../infrastructure/repositories/TariffsRepository";
-import { Validator } from "../../shared/utils/Validator.js";
 import { logger } from "../../shared/utils/logger.js";
+import { TariffMapper } from "../../shared/mappers/TariffMapper.js";
 
 export class CreateTariffsUseCase {
     constructor(
@@ -19,23 +19,20 @@ export class CreateTariffsUseCase {
         });
 
         try {
-            Validator.validateDate(new Date(metadata.date));
-            Validator.validateDate(new Date(metadata.dtTillMax || ""));
-            Validator.validateDate(new Date(metadata.dtNextBox || ""));
-
             const newMetadata = await this.tariffMetadataRepository.create({
                 date: new Date(metadata.date),
-                dtTillMax: new Date(metadata.dtTillMax || ""),
-                dtNextBox: new Date(metadata.dtNextBox || ""),
+                dtTillMax: metadata.dt_till_max ? new Date(metadata.dt_till_max) : null,
                 createdAt: new Date(),
                 updatedAt: new Date()
             });
 
-            for (const tariff of tariffs) {
-                await this.tariffRepository.create({
-                    ...tariff,
+            for (const tariffDto of tariffs) {
+                const tariff = TariffMapper.toEntity({
+                    ...tariffDto,
                     tariffMetadataId: newMetadata.id
                 });
+
+                await this.tariffRepository.create(tariff);
             }
 
             logger.info('Successfully created new tariffs', {

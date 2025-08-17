@@ -3,7 +3,6 @@ export class TariffMetadata {
         public readonly id: number,
         public readonly date: Date,
         public readonly dtTillMax: Date | null,
-        public readonly dtNextBox: Date | null,
         public readonly createdAt: Date,
         public readonly updatedAt: Date
     ) { }
@@ -12,10 +11,10 @@ export class TariffMetadata {
       * Проверяет, актуален ли тариф на указанную дату
       */
     isActiveOnDate(checkDate: Date): boolean {
-        if (!this.dtTillMax && !this.dtNextBox) {
+        if (!this.dtTillMax) {
             return false;
         }
 
-        return checkDate >= this.date && checkDate <= this.dtTillMax!;
+        return checkDate >= this.date && checkDate <= this.dtTillMax;
     }
 }

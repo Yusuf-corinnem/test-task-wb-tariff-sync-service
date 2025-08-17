@@ -72,14 +72,7 @@ export class TariffsController {
 
     async syncTariffs(req: Request, res: Response): Promise<void> {
         try {
-            const { date } = req.query;
-            const targetDate = date ? new Date(date as string) : new Date();
-
-            if (isNaN(targetDate.getTime())) {
-                const response = createValidationErrorResponse('Invalid date format. Use YYYY-MM-DD');
-                res.status(400).json(response);
-                return;
-            }
+            const targetDate = new Date();
 
             logger.info('Starting manual tariffs synchronization', {
                 context: 'TariffsController.syncTariffs',

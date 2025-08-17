@@ -3,6 +3,7 @@ import { TariffDto } from "../../http/dto/TariffDto";
 import { TariffsRepository } from "../../infrastructure/repositories/TariffsRepository";
 import { Validator } from "../../shared/utils/Validator";
 import { logger } from "../../shared/utils/logger";
+import { TariffMapper } from "../../shared/mappers/TariffMapper.js";
 import { isEqual } from "lodash";
 
 export class UpdateExistingTariffsUseCase {
@@ -20,40 +21,50 @@ export class UpdateExistingTariffsUseCase {
         try {
             Validator.validateDate(new Date(metadata.date));
 
-            // Валидируем только если поля существуют
-            if (metadata.dtTillMax) {
-                Validator.validateDate(new Date(metadata.dtTillMax));
-            }
-            if (metadata.dtNextBox) {
-                Validator.validateDate(new Date(metadata.dtNextBox));
-            }
-
             const existingTariffs = await this.tariffRepository.findByDate(new Date(metadata.date));
 
             let createdCount = 0;
             let updatedCount = 0;
             let skippedCount = 0;
 
-            for (const tariff of tariffs) {
-                const existingTariff = existingTariffs.find(t =>
-                    t.warehouseName === tariff.warehouseName &&
-                    t.geoName === tariff.geoName
+            for (const tariffDto of tariffs) {
+                const nextEntity = TariffMapper.toEntity({
+                    ...tariffDto,
+                    tariffMetadataId: metadata.id!
+                });
+
+                const existingTariff = existingTariffs.find((t) =>
+                    t.warehouseName === nextEntity.warehouseName &&
+                    t.geoName === nextEntity.geoName
                 );
 
                 if (!existingTariff) {
-                    await this.tariffRepository.create({
-                        ...tariff,
-                        tariffMetadataId: metadata.id
+                    logger.info('Creating new tariff', {
+                        context: 'UpdateExistingTariffsUseCase.execute',
+                        metadata: { warehouseName: nextEntity.warehouseName, geoName: nextEntity.geoName }
                     });
+
+                    await this.tariffRepository.create(nextEntity);
                     createdCount++;
-                } else {
-                    if (!isEqual(tariff, existingTariff)) {
-                        await this.tariffRepository.update(existingTariff.id, tariff);
-                        updatedCount++;
-                    } else {
-                        skippedCount++;
-                    }
+                    continue;
                 }
+
+                const currentDb = TariffMapper.toDbRow(existingTariff) as any;
+                const nextDb = TariffMapper.toDbRow(nextEntity) as any;
+                delete currentDb.id; delete currentDb.tariff_metadata_id; delete currentDb.warehouse_name;
+                delete nextDb.id; delete nextDb.tariff_metadata_id; delete nextDb.warehouse_name;
+
+                if (isEqual(currentDb, nextDb)) {
+                    skippedCount++;
+                    continue;
+                }
+
+                logger.info('Updating existing tariff', {
+                    context: 'UpdateExistingTariffsUseCase.execute',
+                    metadata: { id: existingTariff.id }
+                });
+                await this.tariffRepository.update(existingTariff.id, nextEntity);
+                updatedCount++;
             }
 
             logger.info('Successfully updated existing tariffs', {

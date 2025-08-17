@@ -1,6 +1,7 @@
 export interface TariffDto {
     id?: number;
-    tariffMetadataId: number;
+    // внутреннее поле, добавляется приложением при сохранении
+    tariffMetadataId?: number;
     warehouseName: string;
     geoName: string;
     boxDeliveryAndStorageExpr: string;        // Deprecated, будет удалено 19.08.2025

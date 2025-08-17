@@ -5,6 +5,7 @@ export class Tariff {
         public readonly warehouseName: string,
         public readonly geoName: string,
         // boxDeliveryAndStorageExpr - deprecated, будет удалено 19.08.2025
+        public readonly boxDeliveryAndStorageExpr: string,
         public readonly boxDeliveryCoefExpr: string,
         public readonly boxStorageCoefExpr: string,
         public readonly boxDeliveryBase: string,

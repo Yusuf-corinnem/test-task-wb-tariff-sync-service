@@ -32,8 +32,8 @@ export class UpdateTariffsUseCase {
 
                 const newMetadata = {
                     date: date.toISOString(),
-                    dtTillMax: tariffs.metadata.dtTillMax?.toISOString(),
-                    dtNextBox: tariffs.metadata.dtNextBox?.toISOString()
+                    dt_till_max: tariffs.metadata.dt_till_max?.toISOString(),
+                    dt_next_box: tariffs.metadata.dt_next_box?.toISOString()
                 };
 
                 await this.createTariffsUseCase.execute(newMetadata, tariffs.tariffs);

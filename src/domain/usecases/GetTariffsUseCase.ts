@@ -1,6 +1,5 @@
 import { TariffsRepository } from '../../infrastructure/repositories/TariffsRepository';
 import { TariffMetadataRepository } from '../../infrastructure/repositories/TariffMetadataRepository';
-import { Validator } from '../../shared/utils/Validator';
 import { logger } from '../../shared/utils/logger';
 
 export class GetTariffsUseCase {
@@ -22,11 +21,8 @@ export class GetTariffsUseCase {
         });
 
         try {
-            // Валидация даты
             const targetDate = new Date(date);
-            Validator.validateDate(targetDate);
 
-            // Получение данных
             const tariffs = await this.tariffsRepository.findByDate(targetDate);
             const metadata = await this.tariffMetadataRepository.findByDate(targetDate);
 
@@ -35,10 +31,9 @@ export class GetTariffsUseCase {
                 metadata: metadata ? {
                     id: metadata.id,
                     date: metadata.date?.toISOString() || null,
-                    dtTillMax: metadata.dtTillMax?.toISOString() || null,
-                    dtNextBox: metadata.dtNextBox?.toISOString() || null,
-                    createdAt: metadata.createdAt?.toISOString() || null,
-                    updatedAt: metadata.updatedAt?.toISOString() || null
+                    dt_till_max: metadata.dtTillMax?.toISOString() || null,
+                    created_at: metadata.createdAt?.toISOString() || null,
+                    updated_at: metadata.updatedAt?.toISOString() || null
                 } : null,
                 tariffs: tariffs,
                 count: tariffs.length,

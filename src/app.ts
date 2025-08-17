@@ -37,17 +37,15 @@ app.use((req, res, next) => {
 
 async function startApp() {
     try {
-        console.log('🚀 Starting WB Tariff Sync Service...');
+        logger.info('Starting service', { context: 'app.start' });
 
-        // Выполняем миграции
-        console.log('📊 Running database migrations...');
+        logger.info('Running database migrations', { context: 'app.migrate' });
         await knex.migrate.latest();
-        console.log('✅ Migrations completed');
+        logger.info('Migrations completed', { context: 'app.migrate' });
 
-        // Выполняем сиды
-        console.log('🌱 Running database seeds...');
+        logger.info('Running database seeds', { context: 'app.seed' });
         await knex.seed.run();
-        console.log('✅ Seeds completed');
+        logger.info('Seeds completed', { context: 'app.seed' });
 
         // Создаем экземпляры репозиториев
         const tariffsRepository = new TariffsRepository(knex);
@@ -97,26 +95,26 @@ async function startApp() {
 
         // Запускаем сервер
         app.listen(PORT, () => {
-            console.log(`🎉 Server is running on port ${PORT}`);
-            console.log(`📖 API Documentation: http://localhost:${PORT}`);
-            console.log(`🏥 Health Check: http://localhost:${PORT}/api/health`);
+            logger.info('Server is running', { context: 'app.listen', metadata: { port: PORT } });
         });
 
     } catch (error) {
-        console.error('❌ Failed to start application:', error);
+        logger.error('Failed to start application', {
+            context: 'app.start',
+            errorInfo: { reason: (error as Error).message, stack: (error as Error).stack, location: 'app.start' }
+        });
         process.exit(1);
     }
 }
 
-// Graceful shutdown
 process.on('SIGTERM', async () => {
-    console.log('🛑 SIGTERM received, shutting down gracefully...');
+    logger.info('SIGTERM received, shutting down', { context: 'app.shutdown' });
     await knex.destroy();
     process.exit(0);
 });
 
 process.on('SIGINT', async () => {
-    console.log('🛑 SIGINT received, shutting down gracefully...');
+    logger.info('SIGINT received, shutting down', { context: 'app.shutdown' });
     await knex.destroy();
     process.exit(0);
 });

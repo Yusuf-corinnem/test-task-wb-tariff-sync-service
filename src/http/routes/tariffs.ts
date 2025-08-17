@@ -4,6 +4,8 @@ import { TariffsController } from '../controllers/TariffsController';
 export function createTariffsRouter(tariffsController: TariffsController): Router {
     const router = Router();
 
+
+    // Сначала конкретные маршруты, потом параметризованные
     const validateDate = (req: any, res: any, next: any) => {
         const { date } = req.params;
         if (!date) {
@@ -29,8 +31,6 @@ export function createTariffsRouter(tariffsController: TariffsController): Route
         req.validatedDate = targetDate;
         next();
     };
-
-    // Сначала конкретные маршруты, потом параметризованные
     router.get('/dates', (req, res) => tariffsController.getAvailableDates(req, res));
     router.post('/sync', (req, res) => tariffsController.syncTariffs(req, res));
     router.get('/:date', validateDate, (req, res) => tariffsController.getTariffsByDate(req, res));
