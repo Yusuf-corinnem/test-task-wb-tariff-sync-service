@@ -6,6 +6,7 @@ export function createTariffsRouter(tariffsController: TariffsController): Route
 
     router.get('/dates', (req, res) => tariffsController.getAvailableDates(req, res));
     router.post('/sync', (req, res) => tariffsController.syncTariffs(req, res));
+    router.post('/export', (req, res) => tariffsController.exportTariffs(req, res));
     router.get('/:date', (req, res) => tariffsController.getTariffsByDate(req, res));
 
     router.use('*', (req, res) => {
@@ -14,6 +15,7 @@ export function createTariffsRouter(tariffsController: TariffsController): Route
             availableRoutes: [
                 'GET /api/tariffs/dates',
                 'POST /api/tariffs/sync',
+                'POST /api/tariffs/export',
                 'GET /api/tariffs/:date'
             ],
             example: '/api/tariffs/2025-01-15'

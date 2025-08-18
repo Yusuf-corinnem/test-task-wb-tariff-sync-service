@@ -4,13 +4,15 @@ import { GetTariffsUseCase } from '../../domain/usecases/GetTariffsUseCase';
 import { GetAvailableDatesUseCase } from '../../domain/usecases/GetAvailableDatesUseCase';
 import { UpdateTariffsUseCase } from '../../domain/usecases/UpdateTariffsUseCase';
 import { logger } from '../../shared/utils/logger';
+import { ExportTariffsToSheetsUseCase } from '../../domain/usecases/ExportTariffsToSheetsUseCase.js';
 import { Validator } from '../../shared/utils/Validator';
 
 export class TariffsController {
     constructor(
         private readonly getTariffsUseCase: GetTariffsUseCase,
         private readonly getAvailableDatesUseCase: GetAvailableDatesUseCase,
-        private readonly updateTariffsUseCase: UpdateTariffsUseCase
+        private readonly updateTariffsUseCase: UpdateTariffsUseCase,
+        private readonly exportTariffsToSheetsUseCase: ExportTariffsToSheetsUseCase
     ) { }
 
     async getTariffsByDate(req: Request, res: Response): Promise<void> {
@@ -123,6 +125,38 @@ export class TariffsController {
                 }
             });
             const response = createServerErrorResponse('Internal server error while syncing tariffs');
+            res.status(500).json(response);
+        }
+    }
+
+    async exportTariffs(req: Request, res: Response): Promise<void> {
+        try {
+            const { date } = (req.body || {}) as any;
+
+            logger.info('Starting export tariffs to Google Sheets', {
+                context: 'TariffsController.exportTariffs',
+                metadata: { date }
+            });
+
+            await this.exportTariffsToSheetsUseCase.execute({
+                targetDate: date ? new Date(date) : undefined,
+            } as any);
+
+            const response = createSuccessResponse({
+                message: 'Export to Google Sheets completed',
+                date: date || new Date().toISOString().split('T')[0]
+            }, 'Export completed');
+            res.status(200).json(response);
+        } catch (error) {
+            logger.error('Failed to export tariffs to Google Sheets', {
+                context: 'TariffsController.exportTariffs',
+                errorInfo: {
+                    reason: error instanceof Error ? error.message : 'Unknown error',
+                    location: 'TariffsController.exportTariffs',
+                    stack: error instanceof Error ? error.stack : undefined
+                }
+            });
+            const response = createServerErrorResponse('Internal server error while exporting tariffs');
             res.status(500).json(response);
         }
     }

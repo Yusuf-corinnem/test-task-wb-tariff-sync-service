@@ -15,6 +15,9 @@ import { TariffsController } from './http/controllers/TariffsController.js';
 import { HealthController } from './http/controllers/HealthController.js';
 import { createAppRouter } from './http/routes/index.js';
 import { logger } from './shared/utils/logger.js';
+import { SheetsService } from './infrastructure/services/SheetsService.js';
+import { ExportTariffsToSheetsUseCase } from './domain/usecases/ExportTariffsToSheetsUseCase.js';
+import { SpreadsheetsController } from './http/controllers/SpreadsheetsController.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -54,6 +57,7 @@ async function startApp() {
 
         // Создаем экземпляры сервисов
         const wbService = new WBService();
+        const sheetsService = new SheetsService();
 
         // Создаем экземпляры use cases
         const fetchTariffsUseCase = new FetchTariffsUseCase(wbService);
@@ -67,17 +71,24 @@ async function startApp() {
         );
         const getTariffsUseCase = new GetTariffsUseCase(tariffsRepository, tariffMetadataRepository);
         const getAvailableDatesUseCase = new GetAvailableDatesUseCase(tariffMetadataRepository);
+        const exportTariffsToSheetsUseCase = new ExportTariffsToSheetsUseCase(
+            getTariffsUseCase,
+            spreadsheetsRepository,
+            sheetsService
+        );
 
         // Создаем экземпляры контроллеров
         const tariffsController = new TariffsController(
             getTariffsUseCase,
             getAvailableDatesUseCase,
-            updateTariffsUseCase
+            updateTariffsUseCase,
+            exportTariffsToSheetsUseCase
         );
         const healthController = new HealthController();
+        const spreadsheetsController = new SpreadsheetsController(spreadsheetsRepository);
 
         // Создаем роутер
-        const appRouter = createAppRouter(tariffsController, healthController);
+        const appRouter = createAppRouter(tariffsController, healthController, spreadsheetsController);
         app.use('/', appRouter);
 
         // Обработка ошибок

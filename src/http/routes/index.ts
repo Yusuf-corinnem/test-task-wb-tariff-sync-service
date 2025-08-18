@@ -1,13 +1,17 @@
 import { Router } from 'express';
 import { createTariffsRouter } from './tariffs.js';
 import { createHealthRouter } from './health.js';
+import { createSpreadsheetsRouter } from './spreadsheets.js';
 
-export function createAppRouter(tariffsController: any, healthController: any): Router {
+export function createAppRouter(tariffsController: any, healthController: any, spreadsheetsController?: any): Router {
     const router = Router();
 
     // API маршруты
     router.use('/api/tariffs', createTariffsRouter(tariffsController));
     router.use('/api/health', createHealthRouter(healthController));
+    if (spreadsheetsController) {
+        router.use('/api/spreadsheets', createSpreadsheetsRouter(spreadsheetsController));
+    }
 
     // Корневой маршрут
     router.get('/', (req, res) => {
@@ -18,6 +22,7 @@ export function createAppRouter(tariffsController: any, healthController: any): 
             endpoints: {
                 health: '/api/health',
                 tariffs: '/api/tariffs',
+                spreadsheets: '/api/spreadsheets',
                 dates: '/api/tariffs/dates',
                 getTariffs: '/api/tariffs/:date'
             },

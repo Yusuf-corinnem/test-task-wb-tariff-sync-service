@@ -37,6 +37,9 @@ const envSchema = z.object({
             .regex(/^[0-9]+$/)
             .transform((value) => parseInt(value)),
     ]),
+    // Google Sheets
+    GOOGLE_CLIENT_EMAIL: z.string().optional(),
+    GOOGLE_PRIVATE_KEY: z.string().optional(),
 });
 
 const env = envSchema.parse({
@@ -51,6 +54,8 @@ const env = envSchema.parse({
     WB_API_BASE_URL: process.env.WB_API_BASE_URL,
     WB_TIMEOUT: process.env.WB_TIMEOUT,
     WB_RETRY_ATTEMPTS: process.env.WB_RETRY_ATTEMPTS,
+    GOOGLE_CLIENT_EMAIL: process.env.GOOGLE_CLIENT_EMAIL,
+    GOOGLE_PRIVATE_KEY: process.env.GOOGLE_PRIVATE_KEY,
 });
 
 export default env;
