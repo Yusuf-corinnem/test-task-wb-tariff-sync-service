@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+
 import { db as knex } from './infrastructure/database/knex.js';
 import { TariffsRepository } from './infrastructure/repositories/TariffsRepository.js';
 import { TariffMetadataRepository } from './infrastructure/repositories/TariffMetadataRepository.js';

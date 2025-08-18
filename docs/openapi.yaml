@@ -1,0 +1,333 @@
+openapi: 3.0.3
+info:
+  title: WB Tariff Sync Service API
+  version: 1.0.0
+  description: |
+    HTTP API сервиса синхронизации тарифов WB и экспорта в Google Sheets.
+    Все успешные ответы обёрнуты в объект { status: 'success', message, data }.
+servers:
+  - url: http://localhost:{port}
+    variables:
+      port:
+        default: "5000"
+paths:
+  /api/health:
+    get:
+      summary: Healthcheck
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+  /api/tariffs/dates:
+    get:
+      summary: Список доступных дат тарифов
+      responses:
+        '200':
+          description: Список дат
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseDates'
+
+  /api/tariffs/{date}:
+    get:
+      summary: Получить тарифы за дату
+      parameters:
+        - in: path
+          name: date
+          required: true
+          schema:
+            type: string
+            format: date
+          description: Дата в формате YYYY-MM-DD
+      responses:
+        '200':
+          description: Тарифы за дату
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseTariffsByDate'
+        '400':
+          description: Ошибка валидации даты
+        '404':
+          description: Нет данных за указанную дату
+
+  /api/tariffs/sync:
+    post:
+      summary: Ручная синхронизация тарифов за сегодня
+      responses:
+        '200':
+          description: Синхронизация выполнена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+  /api/tariffs/export:
+    post:
+      summary: Экспорт актуальных тарифов в Google Sheets
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                date:
+                  type: string
+                  format: date
+                  description: Дата (если не указана — используется сегодняшний день)
+      responses:
+        '200':
+          description: Экспорт выполнен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+
+  /api/spreadsheets:
+    get:
+      summary: Список зарегистрированных Google-таблиц
+      responses:
+        '200':
+          description: Список таблиц
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseSpreadsheets'
+    post:
+      summary: Добавить Google-таблицу
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SpreadsheetCreate'
+      responses:
+        '201':
+          description: Создано
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseSpreadsheetRow'
+
+  /api/spreadsheets/{id}:
+    put:
+      summary: Обновить Google-таблицу
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SpreadsheetUpdate'
+      responses:
+        '200':
+          description: Обновлено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseSpreadsheetRow'
+
+components:
+  schemas:
+    ApiResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        message:
+          type: string
+        data:
+          nullable: true
+
+    ApiResponseDates:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        message:
+          type: string
+        data:
+          type: object
+          properties:
+            dates:
+              type: array
+              items:
+                type: string
+                format: date
+            count:
+              type: integer
+            timestamp:
+              type: string
+              format: date-time
+
+    ApiResponseTariffsByDate:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        message:
+          type: string
+        data:
+          type: object
+          properties:
+            date:
+              type: string
+              format: date
+            metadata:
+              $ref: '#/components/schemas/TariffMetadataResponse'
+            tariffs:
+              type: array
+              items:
+                $ref: '#/components/schemas/Tariff'
+            count:
+              type: integer
+            timestamp:
+              type: string
+              format: date-time
+
+    TariffMetadataResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        date:
+          type: string
+          format: date-time
+        dtTillMax:
+          type: string
+          format: date-time
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+          nullable: true
+        updatedAt:
+          type: string
+          format: date-time
+          nullable: true
+        dtNextBox:
+          type: string
+          format: date-time
+          nullable: true
+
+    Tariff:
+      type: object
+      properties:
+        id:
+          type: integer
+        tariffMetadataId:
+          type: integer
+        warehouseName:
+          type: string
+        geoName:
+          type: string
+        boxDeliveryAndStorageExpr:
+          type: string
+        boxDeliveryCoefExpr:
+          type: string
+        boxStorageCoefExpr:
+          type: string
+        boxDeliveryBase:
+          type: string
+        boxStorageBase:
+          type: string
+        boxDeliveryLiter:
+          type: string
+        boxStorageLiter:
+          type: string
+        boxDeliveryMarketplaceBase:
+          type: string
+        boxDeliveryMarketplaceCoefExpr:
+          type: string
+        boxDeliveryMarketplaceLiter:
+          type: string
+
+    SpreadsheetCreate:
+      type: object
+      required: [spreadsheetId]
+      properties:
+        spreadsheetId:
+          type: string
+        regionFilter:
+          type: string
+          nullable: true
+        description:
+          type: string
+          nullable: true
+        isActive:
+          type: boolean
+          default: true
+
+    SpreadsheetUpdate:
+      type: object
+      properties:
+        spreadsheetId:
+          type: string
+        regionFilter:
+          type: string
+          nullable: true
+        description:
+          type: string
+          nullable: true
+        isActive:
+          type: boolean
+
+    SpreadsheetRow:
+      type: object
+      description: Строка из таблицы spreadsheets (snake_case)
+      properties:
+        id:
+          type: integer
+        spreadsheet_id:
+          type: string
+        region_filter:
+          type: string
+          nullable: true
+        description:
+          type: string
+          nullable: true
+        is_active:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+
+    ApiResponseSpreadsheetRow:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        message:
+          type: string
+        data:
+          $ref: '#/components/schemas/SpreadsheetRow'
+
+    ApiResponseSpreadsheets:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        message:
+          type: string
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/SpreadsheetRow'
+
+

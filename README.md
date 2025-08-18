@@ -86,6 +86,7 @@ POST /api/tariffs/export
 - `GET /api/spreadsheets` — список зарегистрированных таблиц
 - `POST /api/spreadsheets` — добавить Spreadsheet (id/регион/описание/активность)
 - `PUT /api/spreadsheets/:id` — изменить Spreadsheet
+- `GET /docs` — Swagger UI со спецификацией API (если `docs/openapi.yaml` присутствует)
 
 Крон (`CRON_ENABLED=true`) ежечасно: 1) обновляет тарифы на текущую дату, 2) экспортирует актуальные данные во все активные таблицы.
 
