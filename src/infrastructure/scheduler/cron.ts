@@ -15,7 +15,7 @@ export function startScheduler(
 	options?: SchedulerOptions
 ) {
 	const enabled = options?.enabled ?? cronConfig.enabled;
-	const cronExpr = options?.cronExpression || cronConfig.schedule; // каждый час, в начале часа
+	const cronExpr = options?.cronExpression || cronConfig.schedule;
 
 	if (!enabled) {
 		logger.info('Cron scheduler disabled', { context: 'scheduler' });

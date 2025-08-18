@@ -10,6 +10,7 @@ export async function up(knex) {
         table.increments("id").primary();
         table.date("date").notNullable().unique("tariff_metadata_date_unique");
         table.date("dt_till_max").notNullable();
+        table.date("dt_next_box").nullable();
         table.timestamp("created_at").defaultTo(knex.fn.now());
         table.timestamp("updated_at").defaultTo(knex.fn.now());
     });

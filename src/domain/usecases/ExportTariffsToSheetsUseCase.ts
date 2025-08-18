@@ -49,7 +49,8 @@ export class ExportTariffsToSheetsUseCase {
 					: tariffs;
 
 				await exporter.exportAll(sheet.spreadsheetId, regionalTariffs, dateStr, {
-					dt_till_max: result.metadata.dt_till_max || ""
+					dt_till_max: result.metadata.dt_till_max || "",
+					dt_next_box: (result.metadata as any).dt_next_box || "",
 				});
 
 				logger.info("Exported to spreadsheet", {

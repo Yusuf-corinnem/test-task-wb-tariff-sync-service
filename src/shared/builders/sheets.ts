@@ -52,9 +52,9 @@ export const sheetsRowBuilders = {
 			sheetsLayout.storage.sortByIndex ?? 0
 		),
 
-	meta: (dateStr: string, dtTillMax: string): Row[] => [[
+	meta: (dateStr: string, dtTillMax: string, dtNextBox: string): Row[] => [[
 		dateStr,
-		"", // dtNextBox не хранится в БД, оставляем пустым
+		dtNextBox,
 		dtTillMax,
 		new Date().toISOString(),
 	]],

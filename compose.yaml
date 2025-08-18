@@ -70,6 +70,7 @@ services:
       CRON_ENABLED: ${CRON_ENABLED}
       CRON_SCHEDULE: ${CRON_SCHEDULE}
       LOG_LEVEL: ${LOG_LEVEL}
+      SEEDS_ENABLED: ${SEEDS_ENABLED}
       NODE_ENV: production
 
     volumes:

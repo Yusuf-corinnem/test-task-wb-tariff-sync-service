@@ -17,6 +17,7 @@ export class TariffMetadataRepository extends BaseRepository<TariffMetadata> imp
                 data.id || 0,
                 data.date || new Date(),
                 data.dtTillMax || null,
+                data.dtNextBox || null,
                 data.createdAt || new Date(),
                 data.updatedAt || new Date()
             );
@@ -46,6 +47,7 @@ export class TariffMetadataRepository extends BaseRepository<TariffMetadata> imp
                 existing.id,
                 data.date ?? existing.date,
                 data.dtTillMax ?? existing.dtTillMax,
+                data.dtNextBox ?? existing.dtNextBox,
                 existing.createdAt,
                 new Date()
             );

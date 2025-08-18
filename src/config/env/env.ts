@@ -44,6 +44,8 @@ const envSchema = z.object({
     GOOGLE_CLIENT_EMAIL: z.string().optional(),
     GOOGLE_PRIVATE_KEY: z.string().optional(),
     GOOGLE_PRIVATE_KEY_BASE64: z.string().optional(),
+    // Seeds
+    SEEDS_ENABLED: z.string().optional(),
 });
 
 const env = envSchema.parse({
@@ -63,6 +65,7 @@ const env = envSchema.parse({
     GOOGLE_CLIENT_EMAIL: process.env.GOOGLE_CLIENT_EMAIL,
     GOOGLE_PRIVATE_KEY: process.env.GOOGLE_PRIVATE_KEY,
     GOOGLE_PRIVATE_KEY_BASE64: !process.env.GOOGLE_PRIVATE_KEY ? process.env.GOOGLE_PRIVATE_KEY_BASE64 : undefined,
+    SEEDS_ENABLED: process.env.SEEDS_ENABLED,
 });
 
 export default env;

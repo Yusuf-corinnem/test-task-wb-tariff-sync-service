@@ -32,6 +32,7 @@ export class GetTariffsUseCase {
                     id: metadata.id,
                     date: metadata.date?.toISOString() || null,
                     dt_till_max: metadata.dtTillMax?.toISOString() || null,
+                    dt_next_box: (metadata as any).dtNextBox ? (metadata as any).dtNextBox.toISOString() : null,
                     created_at: metadata.createdAt?.toISOString() || null,
                     updated_at: metadata.updatedAt?.toISOString() || null
                 } : null,

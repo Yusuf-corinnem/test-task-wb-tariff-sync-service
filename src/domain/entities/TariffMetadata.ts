@@ -3,6 +3,7 @@ export class TariffMetadata {
         public readonly id: number,
         public readonly date: Date,
         public readonly dtTillMax: Date | null,
+        public readonly dtNextBox: Date | null,
         public readonly createdAt: Date,
         public readonly updatedAt: Date
     ) { }

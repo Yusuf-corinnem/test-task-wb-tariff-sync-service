@@ -47,9 +47,13 @@ async function startApp() {
         await knex.migrate.latest();
         logger.info('Migrations completed', { context: 'app.migrate' });
 
-        logger.info('Running database seeds', { context: 'app.seed' });
-        await knex.seed.run();
-        logger.info('Seeds completed', { context: 'app.seed' });
+        if ((process.env.SEEDS_ENABLED ?? 'true') === 'true') {
+            logger.info('Running database seeds', { context: 'app.seed' });
+            await knex.seed.run();
+            logger.info('Seeds completed', { context: 'app.seed' });
+        } else {
+            logger.info('Skipping seeds (SEEDS_ENABLED=false)', { context: 'app.seed' });
+        }
 
         // Создаем экземпляры репозиториев
         const tariffsRepository = new TariffsRepository(knex);

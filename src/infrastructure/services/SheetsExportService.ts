@@ -9,7 +9,7 @@ export class SheetsExportService {
 		spreadsheetId: string,
 		tariffs: any[],
 		dateStr: string,
-		meta: { dt_till_max?: string | null }
+		meta: { dt_till_max?: string | null; dt_next_box?: string | null }
 	): Promise<void> {
 		await this.sheetsService.rewriteSheet(
 			spreadsheetId,
@@ -36,7 +36,7 @@ export class SheetsExportService {
 			spreadsheetId,
 			sheetsLayout.meta.title,
 			sheetsLayout.meta.headers,
-			sheetsRowBuilders.meta(dateStr, meta.dt_till_max || "")
+			sheetsRowBuilders.meta(dateStr, meta.dt_next_box || "", meta.dt_till_max || "")
 		);
 	}
 }

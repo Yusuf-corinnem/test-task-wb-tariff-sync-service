@@ -16,7 +16,6 @@ export class GetAvailableDatesUseCase {
         });
 
         try {
-            // Получаем все метаданные и извлекаем даты
             const allMetadata = await this.tariffMetadataRepository.findAll();
             const dates = allMetadata.map(meta => meta.date);
 
