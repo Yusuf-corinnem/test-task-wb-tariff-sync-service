@@ -1,6 +1,7 @@
 import winston from 'winston';
 import 'winston-daily-rotate-file';
 import { join } from 'path';
+import { existsSync, mkdirSync } from 'fs';
 import { IBaseLog, IErrorLog } from '../types/logs.js';
 
 // Создаем форматтер для структурированных логов
@@ -12,6 +13,13 @@ const logFormat = winston.format.combine(
 
 // Путь к папке логов
 const logsDir = join(process.cwd(), 'src', 'logs');
+if (!existsSync(logsDir)) {
+    try {
+        mkdirSync(logsDir, { recursive: true });
+    } catch (e) {
+        // noop: если не удалось создать — логи уйдут только в консоль
+    }
+}
 
 // Создаем логгер
 export const winstonLogger = winston.createLogger({
