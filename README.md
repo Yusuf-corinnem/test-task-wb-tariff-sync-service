@@ -24,9 +24,15 @@
 ## Инструкция к запуску
 
 1) Подготовьте `.env` (см. `example.env`). Важно:
-- БД: `POSTGRES_*` — оставьте значения postgres/postgres/postgres
-- Приложение: `APP_PORT` (порт HTTP), `LOG_LEVEL` (info|warning|error)
-- WB: `WB_API_KEY` (ключ), `WB_TIMEOUT` (мс таймаута запроса), `WB_RETRY_ATTEMPTS` (число повторов при 429/5xx/таймауте)
+- БД:
+  - `POSTGRES_*` — оставьте значения postgres/postgres/postgres
+- Приложение:
+  - `APP_PORT` — порт HTTP
+  - `LOG_LEVEL` — info|warning|error
+- WB:
+  - `WB_API_KEY` — ключ
+  - `WB_TIMEOUT` — мс таймаута запроса
+  - `WB_RETRY_ATTEMPTS` — число повторов при 429/5xx/таймауте
 - Google:
   - `GOOGLE_CLIENT_EMAIL` — email сервис‑аккаунта
   - `GOOGLE_PRIVATE_KEY` с `\n` вместо переводов строк ИЛИ `GOOGLE_PRIVATE_KEY_BASE64` (base64 от всего PEM)
