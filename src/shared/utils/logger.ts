@@ -1,5 +1,6 @@
 import winston from 'winston';
 import 'winston-daily-rotate-file';
+import { join } from 'path';
 import { IBaseLog, IErrorLog } from '../types/logs.js';
 
 // Создаем форматтер для структурированных логов
@@ -8,6 +9,9 @@ const logFormat = winston.format.combine(
     winston.format.errors({ stack: true }),
     winston.format.json()
 );
+
+// Путь к папке логов
+const logsDir = join(process.cwd(), 'src', 'logs');
 
 // Создаем логгер
 export const winstonLogger = winston.createLogger({
@@ -24,7 +28,7 @@ export const winstonLogger = winston.createLogger({
         // Ротация логов ошибок
         new winston.transports.DailyRotateFile({
             level: 'error',
-            filename: 'logs/error-%DATE%.log',
+            filename: join(logsDir, 'error-%DATE%.log'),
             datePattern: 'YYYY-MM-DD',
             zippedArchive: true,
             maxSize: '20m',
@@ -33,7 +37,7 @@ export const winstonLogger = winston.createLogger({
         // Ротация всех логов
         new winston.transports.DailyRotateFile({
             level: 'info',
-            filename: 'logs/combined-%DATE%.log',
+            filename: join(logsDir, 'combined-%DATE%.log'),
             datePattern: 'YYYY-MM-DD',
             zippedArchive: true,
             maxSize: '20m',

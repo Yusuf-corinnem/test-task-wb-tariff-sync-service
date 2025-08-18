@@ -2,3 +2,7 @@ node_modules
 .local
 .env
 dist
+
+# Логи
+src/logs/*.log
+src/logs/*.log.gz

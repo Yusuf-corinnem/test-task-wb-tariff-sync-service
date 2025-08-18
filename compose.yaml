@@ -66,6 +66,9 @@ services:
       WB_RETRY_ATTEMPTS: ${WB_RETRY_ATTEMPTS}
       NODE_ENV: production
 
+    volumes:
+      - ./src/logs:/app/src/logs
+
     ports:
       - ${APP_PORT}:${APP_PORT}
 
