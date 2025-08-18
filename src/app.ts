@@ -18,6 +18,7 @@ import { logger } from './shared/utils/logger.js';
 import { SheetsService } from './infrastructure/services/SheetsService.js';
 import { ExportTariffsToSheetsUseCase } from './domain/usecases/ExportTariffsToSheetsUseCase.js';
 import { SpreadsheetsController } from './http/controllers/SpreadsheetsController.js';
+import { startScheduler } from './infrastructure/scheduler/cron.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -108,6 +109,9 @@ async function startApp() {
         app.listen(PORT, () => {
             logger.info('Server is running', { context: 'app.listen', metadata: { port: PORT } });
         });
+
+        // Запускаем планировщик (если включен)
+        startScheduler(updateTariffsUseCase, exportTariffsToSheetsUseCase);
 
     } catch (error) {
         logger.error('Failed to start application', {

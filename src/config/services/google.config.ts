@@ -1,6 +1,8 @@
+import env from "../env/env";
+
 function normalizePrivateKey(): string {
-	let raw = process.env.GOOGLE_PRIVATE_KEY || "";
-	const b64 = process.env.GOOGLE_PRIVATE_KEY_BASE64 || "";
+	let raw = env.GOOGLE_PRIVATE_KEY || "";
+	const b64 = env.GOOGLE_PRIVATE_KEY_BASE64 || "";
 	if (b64) {
 		try {
 			raw = Buffer.from(b64, 'base64').toString('utf8');
@@ -15,7 +17,7 @@ function normalizePrivateKey(): string {
 }
 
 export const googleConfig = {
-	clientEmail: process.env.GOOGLE_CLIENT_EMAIL || "",
+	clientEmail: env.GOOGLE_CLIENT_EMAIL || "",
 	privateKey: normalizePrivateKey(),
 	scopes: ["https://www.googleapis.com/auth/spreadsheets"],
 };
